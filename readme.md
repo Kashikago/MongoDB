@@ -170,3 +170,45 @@ db.salles.find({"smac":{"$eq":true}},{"_id":1,"nom":1})
 ```bash
 db.salles.find({"capacite":{"$gt":1000}},{"nom":1})
 ```
+
+3. Affichage de l'identifiant des salles n'ayant pas de numéro dans leurs adresses
+
+```bash
+db.salles.find({"adresse.numero":{"$exists":false}},{"nom":1})
+```
+
+4. Affichage de l'identifiant des salles ayant exactement 1 avis
+
+```bash
+db.salles.find({"avis":{"$size":1}},{"_id":1})
+```
+
+5. Affichage des salles et la leurs listes de styles des documents qui ont dans leurs programmation du blues
+
+```bash
+db.salles.find({"styles":"blues"},{"_id":1,"nom":1,"styles":1})
+```
+
+6. Affichage des salles qui ont en **premier** blues dans leurs listes de style
+
+```bash
+db.salles.find({"styles.0":{"$eq":"blues"}},{"_id":1,"nom":1,"styles":1})
+```
+
+7. Affichage des salles avec un code postal qui commence par "84" et avec une capacité strictement inférieur à 500
+
+```bash
+db.salles.find({ "adresse.codePostal": { "$regex": /^84/ } },{"name":1})
+```
+
+8. Affichage de l'identifiant des salles dont l'identifiant est pair ou le champ d'avis est vide
+
+```bash
+db.salles.find({"$or":[{"_id":{"$mod":[2.0,0]}},{"avis":{"$exists":false}}]})
+```
+
+9. Affichage le nom des salles qui ont une note compris entre 8 et 10 (Deux inclus)
+
+```bash
+db.salles.find({"$and":[{"avis.note":{"$gte":8}},{"avis.note":{"$lte":10}}]})
+```
