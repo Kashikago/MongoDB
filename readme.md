@@ -115,7 +115,7 @@ db.runCommand()
 db.adminCommand()
 ```
 
-# Mongo DB - Prise de note
+# Exercices
 
 ## Exo Book
 
