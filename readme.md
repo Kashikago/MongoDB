@@ -244,3 +244,44 @@ db.salles.find({"$and":[{"avis.note":{"$gte":8}},{"avis.note":{"$lte":10}}]})
 
 db.salles.find({"$expr":{"$gt":[{"$multiply":["$_id",100]},"$capacite"]}},{"nom":1,"_id":1,"capacite":1})
 ```
+
+13. Affichage des codes postaux des salles
+
+```bash
+db.salles.find({},{"adresse.codePostal":1,"_id":0})
+```
+
+14. Mettre à jour toute les salles en rajoutant 100 personnes à leur capacité
+
+```bash
+db.salles.updateMany({},{"$inc":{"capacite":100}})
+```
+
+15. Ajouter jazz dans les salles qui n'en programme pas
+
+```bash
+db.salles.updateMany({"styles":{"$nin":["jazz"]}},{"$push":{"styles":"jazz"}})
+```
+
+16. Retirer funk à toute les salles dont les id ne sont pas égal à 2 ou 3
+
+```bash
+db.salles.updateMany({"$nor":[{"_id":{"$eq":2}},{"_id":{"$eq":3}}]},{"$pull":{"styles":"funk"}})
+```
+
+17. Ajouter Techno et Reggae au salles qui ont l'ID 3
+
+```bash
+db.salles.updateMany({"_id":{"$eq":3}},{"$addToSet":{"styles":{"$each":["Techno","Regae"]}}})
+```
+
+18. Pour les salles dont le nom commence par "P" (majuscule ou miniscule), augmenter la capacité de 150 places et rajouter un champ contact avec un document téléphone.
+
+```bash
+ db.salles.updateMany({"nom":{"$regex":/^p/i}},{"$inc":{"capacite":150},"$set":{"contact":{"telephone":"04 11 94 00 10"}}})
+```
+
+### Exercice opérateur $where
+
+10.
+11.
