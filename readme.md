@@ -108,6 +108,31 @@ $not
 
 https://www.mongodb.com/docs/manual/reference/operator/update/
 
+## Indexation
+
+Permet d'optimiser les requêtes en créant des "Index" permettant de pointer des champs spécifique des documents.
+L'indexation permet d'éviter d'itérer à travers tous les documents durant une requête.
+
+**Création d'un Index**
+
+```bash
+#Creation d'indexe
+db.<COLLECTION NAME>.createIndex({"fieldToIndex":1},{"name":"INDEX NAME"})
+```
+
+**Suppression d'un Index**
+
+```bash
+#Creation d'indexe
+db.<COLLECTION NAME>.createIndex("INDEX NAME")
+```
+
+## $expr Utilisation d'opérateur d'aggrégation dans le Query
+
+```bash
+db.<COLLECTION NAME>.find("$expr":{"$gt"["$multiply":["$VALUE_TO_MUL","FACTOR"],"$VALUE_TO_EVALUTATE"]})
+```
+
 **runCommand et adminCommand**
 
 ```bash
@@ -211,4 +236,11 @@ db.salles.find({"$or":[{"_id":{"$mod":[2.0,0]}},{"avis":{"$exists":false}}]})
 
 ```bash
 db.salles.find({"$and":[{"avis.note":{"$gte":8}},{"avis.note":{"$lte":10}}]})
+```
+
+11. Affichage du nom et de la capacité des salles dont le produit de la valeur de l'ID multiplié par 100 est supérieur à la capacité
+
+```bash
+
+db.salles.find({"$expr":{"$gt":[{"$multiply":["$_id",100]},"$capacite"]}},{"nom":1,"_id":1,"capacite":1})
 ```
