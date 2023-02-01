@@ -140,6 +140,28 @@ db.runCommand()
 db.adminCommand()
 ```
 
+## GeoJson
+
+### L'opérateur $nearSphere
+
+```bash
+# Retourne les documents par distance dans l'ordre décroissant
+$nearsphere:{
+    $geometry:{
+        "type":"point",
+        "coordinates":[<LONGITUDE>,<LATITUDE>],
+        "$maxDistance": <OPTIONAL>,
+        "$minDistance": <OPTIONAL>,
+    }
+}
+```
+
+### Recherche des documents par distance
+
+```bash
+db.avignon.find({"localisation":{$nearSphere:{$geometry:opera}}},{"_id":0,"nom":1})
+```
+
 # Exercices
 
 ## Exo Book
@@ -281,7 +303,76 @@ db.salles.updateMany({"_id":{"$eq":3}},{"$addToSet":{"styles":{"$each":["Techno"
  db.salles.updateMany({"nom":{"$regex":/^p/i}},{"$inc":{"capacite":150},"$set":{"contact":{"telephone":"04 11 94 00 10"}}})
 ```
 
+19. Rajouter un tableau de document "avis" avec un document composé d'un champ _"date"_ qui vaut la date courante et un champ _"note"_ valant 10 à tous les documents commençant par _AEIOU_ peu importe la casse.
+
+```bash
+db.salles.updateMany({"nom":{"$regex":/[^aeiou]+$/}},{"$set":{"avis":[{"date":new Date(),"note":10}]}})
+```
+
+20. En mode upsert, mettre à jour le document dont le nom commence par _Z_. Le champ capacité passe à 50 et le SMAC passe à false
+
+```
+
+```
+
 ### Exercice opérateur $where
 
 10.
 11.
+
+## Exo Index
+
+**Exercice 1**
+
+```bash
+#Proposition de création d'indexe
+db.salles.createIndex({"capacite":1,"adresse.codePostal":1})
+```
+
+La création d'index qui couvre la capacité et le code postal permettra d'optimiser les requêtes de **lecture** récurantes sur ces deux champs.
+
+## Exo Validation
+
+```json
+//Fichier de validation
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "title": "Salles ObjectValidation",
+    "required": [
+      "nom",
+      "capacite",
+      "adresse",
+      "adresse.codePostal",
+      "adresse.ville"
+    ],
+    "properties": {
+      "nom": {
+        "bsonType": "string",
+        "description": "'Nom' is required (type string)",
+        "minLength": 1
+      },
+      "capacite": {
+        "bsonType": "int",
+        "minimum": 1
+      },
+      "adresse.codePostal": {
+        "bsonType": "string",
+        "minLength": 1
+      },
+      "adresse.ville": {
+        "bsonType": "string",
+        "minLength": 1
+      }
+    }
+  }
+}
+```
+
+1. Durant une tentative d'insertion d'une nouvelle salle avec une validation mise en place, nous avons une erreur de validation signalant qui manque le champ code postal.
+
+Le document n'est pas inséré dans la collection.
+
+Pour régulariser l'insertion du nouveau document il faut ajouter le champ adresse.codePostal avec une valeur.
+
+2. On peut apercevoir qu'après la requête que la base de donnée itère à travers tous les documents et vérifie la validité de chaque document.
