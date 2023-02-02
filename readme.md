@@ -376,3 +376,12 @@ Le document n'est pas inséré dans la collection.
 Pour régulariser l'insertion du nouveau document il faut ajouter le champ adresse.codePostal avec une valeur.
 
 2. On peut apercevoir qu'après la requête que la base de donnée itère à travers tous les documents et vérifie la validité de chaque document.
+
+## Exo GeoJson
+
+1. Requête $geoWithin
+
+```json
+db.salles.find({ "$and":[{"adresse.localisation": { "$geoWithin": { "$centerSphere": [[43.923005, 5.020077], 60 / 6371] } }},{"styles":{"$all":["blues","soul"]}}] })
+
+```
