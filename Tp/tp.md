@@ -10,14 +10,21 @@ Avant l'importation on défini les types pour chaque champ.
 
 ## Indexation des données météo
 
+### Création d'un index sur la collection
+
 Création d'un index pour les dates des données météo avec le fonction `createIndex()`.
 ![indexation](img/indexation.PNG)
+
+### Listing des index de la collection
+
 Listing des indexes présent sur la collection seatleWeather
 ![indexation](img/listIndexes.PNG)
 
 ## Requête MongoDB
 
-A. Recherche des enregistrement de valeur supérieur à 25C° durant la période d'été (Juin,Juillet et Août)
+### A) Recherche des température supérieur à 25C° durant l'été
+
+Recherche des enregistrement de valeur supérieur à 25C° durant la période d'été (Juin,Juillet et Août)
 
 ```bash
 ##
@@ -38,7 +45,9 @@ db.seatleWeather.find(
 **Résultat de la requête:**
 ![SummerTempRequest](img/summerTempRequest.PNG)
 
-B.1 La collection de document ne possède pas de donnée au sujet de la pression atmosphérique et l'identifiant de station météo.
+### B.1) Insertion de la pression atmosphérique dans les documents de la collection
+
+La collection de document ne possède pas de donnée au sujet de la pression atmosphérique et l'identifiant de station météo.
 Pour palier à ce manque voici la commande qui ajoute une valeur aléatoire pour la pression atmosphérique et l'identification des stations.
 
 ```bash
@@ -48,7 +57,7 @@ db.seatleWeather.updateMany({},[{"$set":{"atmoPressure":{"$multiply":[{"$rand":{
 db.seatleWeather.updateMany({},[{"$set":{"stationId":{"$floor":{"$multiply":[{"$rand":{}},4]}}}}])
 ```
 
-B.2 Triage des stations métérologique par pression atmosphérique
+### B.2) Triage des stations métérologique par pression atmosphérique
 
 ```bash
 db.seatleWeather.find({},{"stationId":1,"atmoPressure":1,"date":1}).sort({"atmoPressure":-1})
@@ -59,7 +68,12 @@ db.seatleWeather.find({},{"stationId":1,"atmoPressure":1,"date":1}).sort({"atmoP
 
 ## Framework d'agrégation
 
-A. Calcule de la moyenne des températures de chaque station météo pour chaque mois.
+### A) Calcule de la moyenne des températures de chaque station météo pour chaque mois.
+
+**La pipeline définie pour l'agrégation suit la précèdure suivante:**
+
+1. On regroupe les document par **stationId**, **Année** et **Mois** puis on calcule la moyenne des température enregistrés durant le mois par la station méteo.
+2. On tri par **\_id** des stations.
 
 ```js
 //Pipeline utilisé par le framework d'agrégation
@@ -83,7 +97,14 @@ db.seatleWeather.aggregate(pipeline);
 **Résultat de la requête:**
 ![AverageTempForEachStation](img/agregation_temp_by_month.PNG)
 
-B. Retrouver la station météo qui a enregisté la plus haute température en été.
+### B) Retrouver la station météo qui a enregisté la plus haute température en été.
+
+**La pipeline définie pour l'agrégation suit la précèdure suivante:**
+
+1. On récupère les documents dont le mois est égal au 6 ,7 et 8 (Juin,Juillet, Août).
+2. On tri par **temp_max** par ordre décroissant.
+3. On limite le nombre document dans la pipeline à 1.
+4. On affiche la **stationId**, **temp_max** et la **date**.
 
 ```js
 //Pipeline utilisé par le framework d'agrégation
