@@ -130,3 +130,8 @@ db.seatleWeather.aggregate(pipeline);
 
 **Résultat de la requête:**
 ![MaxTempRegister](img/agregation_max_temp.PNG)
+
+## Exportation de la collection
+
+Exportation de la collection en format CSV de la collection seatleWeather.
+![MaxTempRegister](img/export.PNG)
