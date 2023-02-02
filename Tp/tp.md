@@ -35,7 +35,7 @@ db.seatleWeather.find(
     })
 ```
 
-Résultat de la requête:
+**Résultat de la requête:**
 ![SummerTempRequest](img/summerTempRequest.PNG)
 
 B.1 La collection de document ne possède pas de donnée au sujet de la pression atmosphérique et l'identifiant de station météo.
@@ -54,7 +54,7 @@ B.2 Triage des stations métérologique par pression atmosphérique
 db.seatleWeather.find({},{"stationId":1,"atmoPressure":1,"date":1}).sort({"atmoPressure":-1})
 ```
 
-Résultat de la requête:
+**Résultat de la requête:**
 ![SortAtmoPressure](img/triage_station_meteo_pression.PNG)
 
 ## Framework d'agrégation
@@ -80,12 +80,13 @@ var pipeline = [
 db.seatleWeather.aggregate(pipeline);
 ```
 
-Résultat de la requête:
+**Résultat de la requête:**
 ![AverageTempForEachStation](img/agregation_temp_by_month.PNG)
 
 B. Retrouver la station météo qui a enregisté la plus haute température en été.
 
 ```js
+//Pipeline utilisé par le framework d'agrégation
 var pipeline = [
   {
     $match: {
@@ -99,7 +100,12 @@ var pipeline = [
     },
   },
   { $sort: { temp_max: -1 } },
-  { $group: { _id: "$stationId", topTemp: { $first: "$$ROOT" } } },
-  { $replaceWith: "$topTemp" },
+  { $limit: 1 },
+  { $project: { stationId: 1, temp_max: 1, date: 1 } },
 ];
+
+db.seatleWeather.aggregate(pipeline);
 ```
+
+**Résultat de la requête:**
+![MaxTempRegister](img/agregation_max_temp.PNG)
