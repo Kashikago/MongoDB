@@ -382,6 +382,12 @@ Pour régulariser l'insertion du nouveau document il faut ajouter le champ adres
 1. Requête $geoWithin
 
 ```json
-db.salles.find({ "$and":[{"adresse.localisation": { "$geoWithin": { "$centerSphere": [[43.923005, 5.020077], 60 / 6371] } }},{"styles":{"$all":["blues","soul"]}}] })
+db.salles.find({
+    "$and":[{"adresse.localisation":
+    { "$geoWithin":
+        { "$centerSphere": [[43.923005, 5.020077], 60 / 6371]}}},
+    {"styles":{"$all":["blues","soul"]}}] })
 
 ```
+
+2.
